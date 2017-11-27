@@ -119,7 +119,6 @@ Gene\tFull name\tOMIM\tSegdup\tNo loci in controls\tNo loci in cases\tA\tB\tC\tD
 		my @c = split /\t/, $_;
 		my ($position, $ref, $alt, $qs, $gene, $gene_name, $dbsnp, $nhlbi, $tgenome, $yale_freq, $type, $AAcons, $omim, $indel_eval) = ("$c[0]\t$c[1]", $c[3], $c[4], $c[5], $c[8 + $ct_no + 1], $c[8 + $ct_no + 2], $c[8 + $ct_no + 7], $c[8 + $ct_no + 8], $c[8 + $ct_no + 9], $c[8 + $ct_no + 10], $c[8 + $ct_no + 12], $c[8 + $ct_no + 17], $c[8 + $ct_no + 23], indel_eval($c[3], $c[4]));
 		$AAcons = 0 if ($AAcons eq "na");
-#print "$position\t$tgenome, $nhlbi, $yale_freq\t", calculating_freq($tgenome, $nhlbi, $yale_freq), "\n";
 		next if ($qs eq ".");
 		if ($include_db_tg =~ /n/i) {
 			next if ($dbsnp ne "Novel" && !$flg_dbsnp{$dbsnp});
@@ -190,20 +189,16 @@ Gene\tFull name\tOMIM\tSegdup\tNo loci in controls\tNo loci in cases\tA\tB\tC\tD
 		my ($position, $ref, $alt, $qs, $gene, $gene_name, $dbsnp, $nhlbi, $tgenome, $yale_freq, $type, $AAcons, $indel_eval) = ("$c[0]\t$c[1]", $c[3], $c[4], $c[5], $c[8 + $ca_no + 1], $c[8 + $ca_no + 2], $c[8 + $ca_no + 7], $c[8 + $ca_no + 8], $c[8 + $ca_no + 9], $c[8 + $ca_no + 10], $c[8 + $ca_no + 12], $c[8 + $ca_no + 17], indel_eval($c[3], $c[4]));
 		$AAcons = 0 if ($AAcons eq "na");
 		next if ($qs eq ".");
-#print "0:: $gene\t$position\t$dbsnp\t$nhlbi\t$tgenome\t$yale_freq\t$AAcons\t$nih\n";
 		if ($include_db_tg =~ /n/i) {
 			next if ($dbsnp ne "Novel" && !$flg_dbsnp{$dbsnp});
 			next if ($tgenome ne "Novel");
 		}
 #		next if ($yale_freq > $freq/100);
-#print "1:: $gene\t$position\t$dbsnp\t$nhlbi\t$tgenome\t$yale_freq\t$AAcons\t$nih\n";
 		if ($nhlbi ne "Novel") {
-#print "2:: $gene\t$position\t$dbsnp\t$nhlbi\t$tgenome\t$yale_freq\t$AAcons\t$nih\n";
 			next if ($nih < $nhlbi);
 		}	# instead of ## next if ($nih =~ /i/i && $nhlbi ne "Novel");
 		next if ($swed{$position});
 
-#print "3:: $gene\t$position\t$dbsnp\t$nhlbi\t$tgenome\t$yale_freq\t$AAcons\t$nih\n";
 		if (length($ref) * length($alt) == 1) {			#snv
 			next if ($qs < $snv_qscutoff);
 			next if (calculating_freq($tgenome, $nhlbi, $yale_freq) > $freq/100);
@@ -214,7 +209,6 @@ Gene\tFull name\tOMIM\tSegdup\tNo loci in controls\tNo loci in cases\tA\tB\tC\tD
 			$ca_indel++;
 		}
 
-#print "4:: $gene\t$position\t$dbsnp\t$nhlbi\t$tgenome\t$yale_freq\t$AAcons\t$nih\n";
 		$gene_name{$gene} = $gene_name;
 		my ($allele_no, $het_ind, $hom_ind) = (0, 0, 0);
 		for my $i (8+1..8+$ca_no) {
@@ -365,10 +359,7 @@ sub calculating_freq {
 	my $numerator = 0;
 	my ($tgn, $nhlbi_ex, $yale_ex) = ($_[0], $_[1], $_[2]);
 	if ($tgn =~ /1\:(\d+)\,2\:(\d+)/) {	$numerator += $1 + 2*$2;	}
-#print "0: $numerator\t";
 	if ($nhlbi_ex =~ /\.\d+/) {	$numerator += int($nhlbi_ex * $nhlbi_ex_denom/100);	}
-#print "1: $numerator\t";
 	if ($yale_ex =~ /\.\d+/) {	$numerator += int($yale_ex * $yale_ex_denom);	}
-#print "2: $numerator\n";
 	return $numerator/$freq_denominator;
 }
